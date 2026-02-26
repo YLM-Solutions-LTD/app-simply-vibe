@@ -4,8 +4,82 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>simply-vibe</title>
+  <style>
+    :root {
+      --bg: #f7f4ea;
+      --card: #ffffff;
+      --line: #ded8c8;
+      --text: #1c1d1f;
+      --muted: #5f6370;
+      --brand: #1168b3;
+      --warn: #8a2f2f;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: "Segoe UI", sans-serif; color: var(--text); }
+    body { display: grid; place-items: center; background: linear-gradient(180deg, #f6f1e2, var(--bg)); padding: 24px; }
+
+    .card {
+      width: min(680px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 16px 36px rgba(20, 32, 45, 0.12);
+      padding: 24px;
+    }
+
+    .logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .logo-word { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.02em; color: var(--brand); }
+    h1 { margin: 0 0 10px; font-size: 1.35rem; }
+    p { margin: 0 0 8px; line-height: 1.45; color: var(--muted); }
+    .warn { color: var(--warn); font-weight: 600; }
+    .ok { color: #1f7c3b; font-weight: 600; }
+  </style>
 </head>
 <body>
-  <h1>Hello World</h1>
+  <main class="card">
+    <div class="logo-wrap">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-label="SimplyLog logo" role="img">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1">
+            <stop offset="0%" stop-color="#0e7ccf"></stop>
+            <stop offset="100%" stop-color="#0a4a8b"></stop>
+          </linearGradient>
+        </defs>
+        <circle cx="18" cy="18" r="16" fill="url(#g)"></circle>
+        <path d="M10 20c3 4 13 4 16-2" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"></path>
+        <circle cx="13.2" cy="14" r="2" fill="#fff"></circle>
+      </svg>
+      <span class="logo-word">SimplyLog</span>
+    </div>
+
+    <h1>Simply Vibe mini app</h1>
+    <p id="status" class="warn">Waiting for SimplyLog host context...</p>
+    <p>This application must run inside SimplyLog as an embedded iframe.</p>
+    <p>Open it from the SimplyLog <strong>/App/simply-vibe</strong> route so the host can pass runtime context via <code>postMessage</code>.</p>
+  </main>
+
+  <script>
+    let received = false;
+    window.addEventListener("message", function (event) {
+      if (received) return;
+      if (!event || !event.data) return;
+      received = true;
+      var status = document.getElementById("status");
+      if (status) {
+        status.className = "ok";
+        status.textContent = "Host context received from SimplyLog.";
+      }
+    });
+
+    window.setTimeout(function () {
+      if (received) return;
+      var status = document.getElementById("status");
+      if (status) {
+        status.className = "warn";
+        status.textContent = "No context received. Launch this app from within SimplyLog.";
+      }
+    }, 3000);
+  </script>
 </body>
 </html>
